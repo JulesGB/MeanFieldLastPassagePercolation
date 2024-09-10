@@ -39,5 +39,5 @@ kmax = generate_kmax(G, 1)
 plt.figure(1)
 custom_draw(kmax, "kmax.png")
 
-#plt.figure(2)
-#custom_draw(G, "G.png")
+plt.figure(2)
+custom_draw(G, "G.png", draw_edge_weights=False)
