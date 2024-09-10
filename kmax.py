@@ -3,13 +3,6 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import random
 
-n = 20
-G = nx.complete_graph(n)
-
-# Add random edge weights
-for e in G.edges:
-    G[e[0]][e[1]]["weight"] = random.uniform(0,1)
-
 def generate_kmax(graph, k):
     # Copy nodes from G
     km = nx.Graph()
@@ -23,13 +16,28 @@ def generate_kmax(graph, k):
 
     return km
 
-kmax = generate_kmax(G, 2)
+def custom_draw(graph, dest, draw_edge_weights=True):
+    nx.draw_circular(graph, with_labels=True)
+    if draw_edge_weights:
+        pos = nx.circular_layout(graph)
+        labels = {k:v['weight'] for k,v in nx.get_edge_attributes(graph, 'weight').items()}
+
+        nx.draw_networkx_edge_labels(graph, pos, edge_labels=labels, verticalalignment='baseline', font_size=8)
+    plt.savefig(dest)
+
+# Test setup
+n = 20
+G = nx.complete_graph(n)
+
+# Add random edge weights
+for e in G.edges:
+    G[e[0]][e[1]]["weight"] = random.uniform(0,1)
+
+kmax = generate_kmax(G, 1)
 
 # Drawing
 plt.figure(1)
-nx.draw_circular(kmax, with_labels=True)
-plt.savefig("kmax.png")
+custom_draw(kmax, "kmax.png")
 
-plt.figure(2)
-nx.draw_circular(G, with_labels=True)
-plt.savefig("G.png")
+#plt.figure(2)
+#custom_draw(G, "G.png")
