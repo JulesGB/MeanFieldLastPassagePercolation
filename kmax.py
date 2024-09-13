@@ -1,11 +1,9 @@
-import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
-import random
 
 def generate_kmax(graph, k):
     # Copy nodes from G
-    km = nx.Graph()
+    km = nx.DiGraph()
     km.add_nodes_from(graph.nodes())
     
     # Get list of edges from node, then sort according to weight and take the largest k edges
@@ -16,8 +14,8 @@ def generate_kmax(graph, k):
 
     return km
 
-def custom_draw(graph, dest, draw_edge_weights=True):
-    nx.draw_circular(graph, with_labels=True)
+def custom_draw(graph, dest, draw_edge_weights=True, layout=nx.circular_layout):
+    nx.draw(graph, with_labels=True, arrows=True, pos=layout(graph))
     if draw_edge_weights:
         pos = nx.circular_layout(graph)
         labels = {k:v['weight'] for k,v in nx.get_edge_attributes(graph, 'weight').items()}
