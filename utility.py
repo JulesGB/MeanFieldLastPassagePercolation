@@ -61,16 +61,11 @@ def path_cover(tree):
 
     # Recover vertex-disjoint path
     path = []
-    counts = {n:0 for n in tree.nodes()}
     for node,(x,z,v1,v2) in max_weights.items():
         if v1 != None and max_weights[v1][1] > 0:
             path.append((node, v1))
-            counts[node] += 1
-            counts[v1] += 1
         if v2 != None and (node == 0 or (z != None and z <= 0)):
             path.append((node, v2))
-            counts[node] += 1
-            counts[v2] += 1
 
     print('Path edges: ' + str(path))
     print('Total path length (x(root)): ' + str(max_weights[0][0]))
