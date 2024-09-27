@@ -12,4 +12,5 @@ def kmax_diameter(graph):
         return sum
     
 def count_bidrectional(graph):
-    return 0.5 * len([ 1 for (u,v) in graph.edges() if u in graph[v] ])
+    #fine since no possiblity of self loops because we are just working with complete graphs
+    return 0.5 * len([ 1 for (u,v) in graph.edges() if u in graph[v]])
