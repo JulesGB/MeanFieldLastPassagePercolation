@@ -63,20 +63,32 @@ def path_cover(tree):
     path = []
     counts = {n:0 for n in tree.nodes()}
     for node,(x,z,v1,v2) in max_weights.items():
+        # TODO: "counts[node] < 2..." deletes too much, need more nuanced strategy
+        # if z == None: continue
+        # if z < 0:
         if v1 != None:
             path.append((node, v1))
             counts[node] += 1
             counts[v1] += 1
-                
         if v2 != None:
             path.append((node, v2))
             counts[node] += 1
             counts[v2] += 1
+        # else:
+        #     if v1 != None:
+        #         path.append((node, v1))
+        #         counts[node] += 1
+        #         counts[v1] += 1
+        #     parent = next(dag.predecessors(node))
+        #     if parent != None:
+        #         path.append((parent, node))
+        #         counts[parent] += 1
+        #         counts[node] += 1
+        
 
     print(counts)
 
-    # ISSUE: the below strategy can end up removing too many edges if 
-    
+    # ISSUE: the below strategy can end up removing too many edges if ???
     # Remove extra edges:
     # problem_nodes = [n for n,c in counts.items() if c > 2]
     # for node in problem_nodes:
@@ -85,16 +97,10 @@ def path_cover(tree):
     #     path.remove(problem_edge)
     #     print('removed ' + str(problem_edge) + ' with weight ' + str(weights[problem_edge]))
 
-    s = 0
-    for u,v in path:
-        try:
-            s += weights[(u,v)]
-        except KeyError:
-            s += weights[(v,u)]
-
     print('Path edges: ' + str(path))
     print('Total path length (x(root)): ' + str(max_weights[0][0]))
-    print('Total path length (actual): ' + str(s))
+    print('Total path length (actual): ' + str(sum(weights[e] for e in path)))
+    print('Difference: ' + str(sum(weights[e] for e in path)-max_weights[0][0]))
 
     return path
 
