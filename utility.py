@@ -50,7 +50,7 @@ def path_cover(tree):
                             max2, max2_v = zv, v
 
                 x = sum([max_weights[v][0] for v in children]) + max(max1, 0) + max(max2, 0)
-                z = None
+                z = 0
                 
                 if node != 0:
                     parent = next(dag.predecessors(node))
@@ -62,10 +62,18 @@ def path_cover(tree):
     # Recover vertex-disjoint path
     path = []
     for node,(x,z,v1,v2) in max_weights.items():
+        print(str(node) + ': ' + str((x,z,v1,v2)))
         if v1 != None and max_weights[v1][1] > 0:
             path.append((node, v1))
-        if v2 != None and (node == 0 or (z != None and z <= 0)):
-            path.append((node, v2))
+
+        if v2 != None:
+            if node == 0:
+                path.append((node, v2))
+            else:
+                parent = next(dag.predecessors(node))
+                parent_z = max_weights[parent][1]
+                if z <= 0: # or parent_z <= 0:
+                    path.append((node, v2))
 
     print('Path edges: ' + str(path))
     print('Total path length (x(root)): ' + str(max_weights[0][0]))
