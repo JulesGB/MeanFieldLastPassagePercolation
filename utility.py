@@ -15,29 +15,7 @@ def kmax_diameter(graph):
 def count_bidrectional(graph):
     return 0.5 * len([ 1 for (u,v) in graph.edges() if u in graph[v] ])
 
-# TODO
-# Given a tree, return an (optimal) path covering of the tree's edges
-# ---------------------
-# 1) Pick a root r, e.g., 0
-# 2) Construct a DAG D out from root r (BFS/DFS from r)
-# 3) Get a topological sort of D
-# 4) Everything else...
 def path_cover(tree):
-    # dag = nx.DiGraph()
-    # dag.add_nodes_from(tree)
-
-    # BFS from root 0
-    # q = queue.Queue()
-    # q.put(0)
-    # explored = {0}
-    # while not q.empty():
-    #     v = q.get()
-    #     for w in nx.neighbors(tree, v):
-    #         if w not in explored:
-    #             explored.add(w)
-    #             dag.add_edge(v,w)
-    #             q.put(w)
-    
     dag = nx.bfs_tree(tree, 0)
     topo = list(nx.topological_sort(dag))[::-1]
     weights = nx.get_edge_attributes(tree, 'weight')
