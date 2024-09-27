@@ -20,6 +20,10 @@ def path_cover(tree):
     topo = list(nx.topological_sort(dag))[::-1]
     weights = nx.get_edge_attributes(tree, 'weight')
 
+    # Make weights bidirectional
+    for u,v in list(weights.keys()):
+        weights[v,u] = weights[u,v]
+
     # Initialize leaves as (0, w_parent(leaf))
     max_weights = {}
     for node in dag.nodes():
@@ -28,11 +32,12 @@ def path_cover(tree):
             max_weights[node] = (0, next(parents), None, None)
 
     while len(max_weights) < tree.number_of_nodes() - 1:
+        # Iterate over nodes in (reverse) topological order so that leaf nodes
         for node in topo:               
             children = list(dag.successors(node))
             
             # All children are defined
-            if all([v in max_weights for v in children]): 
+            if all(v in max_weights for v in children): 
                 max1 = max2 = float('-inf')
                 max1_v = max2_v = None
                 for v in children:
@@ -49,25 +54,47 @@ def path_cover(tree):
                 
                 if node != 0:
                     parent = next(dag.predecessors(node))
-                    parent_edge_weight = 0
-                    try:
-                        parent_edge_weight = weights[(node, parent)]
-                    except KeyError:
-                        parent_edge_weight = weights[(parent, node)]
-                    
+                    parent_edge_weight = weights[(node, parent)]
                     z = parent_edge_weight - max(max2, 0)
                 
-                max_weights[node] = (x,z,max1_v, max2_v)
+                max_weights[node] = (x, z, max1_v, max2_v)
 
+    # Recover vertex-disjoint path
     path = []
+    counts = {n:0 for n in tree.nodes()}
     for node,(x,z,v1,v2) in max_weights.items():
         if v1 != None:
             path.append((node, v1))
+            counts[node] += 1
+            counts[v1] += 1
+                
         if v2 != None:
             path.append((node, v2))
+            counts[node] += 1
+            counts[v2] += 1
+
+    print(counts)
+
+    # ISSUE: the below strategy can end up removing too many edges if 
+    
+    # Remove extra edges:
+    # problem_nodes = [n for n,c in counts.items() if c > 2]
+    # for node in problem_nodes:
+    #     edges = [(u,v) for u,v in path if u == node or v == node]
+    #     problem_edge = min(edges, key=lambda e: weights[e])
+    #     path.remove(problem_edge)
+    #     print('removed ' + str(problem_edge) + ' with weight ' + str(weights[problem_edge]))
+
+    s = 0
+    for u,v in path:
+        try:
+            s += weights[(u,v)]
+        except KeyError:
+            s += weights[(v,u)]
 
     print('Path edges: ' + str(path))
-    print('Total path length: ' + str(max_weights[0][0]))
+    print('Total path length (x(root)): ' + str(max_weights[0][0]))
+    print('Total path length (actual): ' + str(s))
 
     return path
 
