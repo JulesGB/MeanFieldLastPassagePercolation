@@ -31,7 +31,7 @@ def path_cover(tree):
             parents = dag.predecessors(node)
             max_weights[node] = (0, next(parents), None, None)
 
-    while len(max_weights) < tree.number_of_nodes() - 1:
+    while len(max_weights) < tree.number_of_nodes():
         # Iterate over nodes in (reverse) topological order so that leaf nodes
         for node in topo:               
             children = list(dag.successors(node))
@@ -63,39 +63,14 @@ def path_cover(tree):
     path = []
     counts = {n:0 for n in tree.nodes()}
     for node,(x,z,v1,v2) in max_weights.items():
-        # TODO: "counts[node] < 2..." deletes too much, need more nuanced strategy
-        # if z == None: continue
-        # if z < 0:
-        if v1 != None:
+        if v1 != None and max_weights[v1][1] > 0:
             path.append((node, v1))
             counts[node] += 1
             counts[v1] += 1
-        if v2 != None:
+        if v2 != None and (node == 0 or (z != None and z <= 0)):
             path.append((node, v2))
             counts[node] += 1
             counts[v2] += 1
-        # else:
-        #     if v1 != None:
-        #         path.append((node, v1))
-        #         counts[node] += 1
-        #         counts[v1] += 1
-        #     parent = next(dag.predecessors(node))
-        #     if parent != None:
-        #         path.append((parent, node))
-        #         counts[parent] += 1
-        #         counts[node] += 1
-        
-
-    print(counts)
-
-    # ISSUE: the below strategy can end up removing too many edges if ???
-    # Remove extra edges:
-    # problem_nodes = [n for n,c in counts.items() if c > 2]
-    # for node in problem_nodes:
-    #     edges = [(u,v) for u,v in path if u == node or v == node]
-    #     problem_edge = min(edges, key=lambda e: weights[e])
-    #     path.remove(problem_edge)
-    #     print('removed ' + str(problem_edge) + ' with weight ' + str(weights[problem_edge]))
 
     print('Path edges: ' + str(path))
     print('Total path length (x(root)): ' + str(max_weights[0][0]))
