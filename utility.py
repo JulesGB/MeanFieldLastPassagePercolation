@@ -82,10 +82,64 @@ def path_cover(tree):
 
     return path
 
-            
-            
-    
+def path_cover_two(tree):
+    dag = nx.bfs_tree(tree, 0)
+    topo = list(nx.topological_sort(dag))[::-1]
+    weights = nx.get_edge_attributes(tree, 'weight')
 
+    for u,v in list(weights.keys()):
+        weights[v,u] = weights[u,v]
+    
+    X = {}
+    for node in dag.nodes():
+        if dag.out_degree(node) == 0:
+            X[node] = 0
+
+    while len(X) < tree.number_of_nodes():
+        for node in topo:
+            children = list(dag.successors(node))
+            if len(children) == 0:
+                continue
+            if all(v in X for v in children):
+                #case where one child
+
+                # update X(node)
+                child_nodes_weights = {}
+                for child in children:
+                    child_nodes_weights[child] = weights[child, node]
+                max_key = max(child_nodes_weights, key = child_nodes_weights.get)
+                #finds max weight
+                fstmax = child_nodes_weights[max_key]
+                if fstmax != 0:
+                    child_nodes_weights[max_key] = -100
+                #finds second max weight, sets to zero if it doesn't exist
+                scdmax_key = max(child_nodes_weights, key = child_nodes_weights.get)
+                scdmax = 0
+                if child_nodes_weights[scdmax_key] != -100:
+                    scdmax = child_nodes_weights[scdmax_key]
+                if scdmax != 0:
+                    child_nodes_weights[scdmax_key] = -100
+                X[node] = fstmax + scdmax
+                #adds all unused nodes, used nodes have been marked with -100
+                for child in children:
+                    if child_nodes_weights[child] != -100:
+                        X[node] += X[child]
+                
+                #update the weights of the parents
+                if (len(list(dag.predecessors(node))) != 0):
+                    parent = list(dag.predecessors(node))[0]
+                    if scdmax < weights[node, parent]:
+                        weights[node, parent] = X[node] + weights[node, parent] - scdmax
+                    else:
+                        weights[node, parent] = 0
+        
+    return X
+
+
+
+            
+            
+                
 
 
 
