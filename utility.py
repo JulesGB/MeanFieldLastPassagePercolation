@@ -15,10 +15,13 @@ def kmax_diameter(graph):
 def count_bidrectional(graph):
     return 0.5 * len([ 1 for (u,v) in graph.edges() if u in graph[v] ])
 
-def path_cover(tree):
-    dag = nx.bfs_tree(tree, 0)
+def path_cover(tree, root=0):
+    dag = nx.bfs_tree(tree, root)
     topo = list(nx.topological_sort(dag))[::-1]
     weights = nx.get_edge_attributes(tree, 'weight')
+
+    if dag.number_of_nodes() == 1:
+        return [], 0, 0
 
     # Make weights bidirectional
     for u,v in list(weights.keys()):
@@ -52,12 +55,10 @@ def path_cover(tree):
                 x = sum([max_weights[v][0] for v in children]) + max(max1, 0) + max(max2, 0)
                 z = 0
                 
-                if node != 0:
+                if node != root:
                     parent = next(dag.predecessors(node))
                     parent_edge_weight = weights[(node, parent)]
                     z = parent_edge_weight - max(max2, 0)
-                #else:
-                    # TODO
                 
                 max_weights[node] = (x, z, max1_v, max2_v)
 
@@ -67,12 +68,12 @@ def path_cover(tree):
     #for node,(x,z,v1,v2) in max_weights.items():
     for node in topo[::-1]:
         x,z,v1,v2 = max_weights[node]
-        print(str(node) + ': ' + str((x,z,v1,v2)))
+        #print(str(node) + ': ' + str((x,z,v1,v2)))
         if v1 != None and max_weights[v1][1] > 0:
             path.append((node, v1))
 
         if v2 != None:
-            if node == 0:
+            if node == root:
                 if max_weights[v2][1] > 0:
                     path.append((node, v2))
             else:
@@ -88,14 +89,17 @@ def path_cover(tree):
                         if max_weights[parent][1] <= 0:
                             if node != max_weights[parent][2] and node != max_weights[parent][3]:
                                 path.append((node,v2))
+                        else:
+                            if node != max_weights[parent][2]:
+                                path.append((node, v2))
 
     #print('Path edges: ' + str(path))
-    #print('Total path length (x(root)): ' + str(max_weights[0][0]))
+    #print('Total path length (x(root)): ' + str(max_weights[root][0]))
     #print('Total path length (actual): ' + str(sum(weights[e] for e in path)))
-    #print('Difference: ' + str(sum(weights[e] for e in path)-max_weights[0][0]))
-    sum(weights[e] for e in path)-max_weights[0][0])
+    #print('Difference: ' + str(sum(weights[e] for e in path)-max_weights[root][0]))
+    diff = sum(weights[e] for e in path)-max_weights[root][0]
 
-    return path
+    return path, diff, max_weights[root][0]
 
 def path_cover_two(tree):
     dag = nx.bfs_tree(tree, 0)
