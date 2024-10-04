@@ -106,11 +106,9 @@ def path_cover_two(tree):
         weights[v,u] = weights[u,v]
     
     X = {}
-    choices = {}
     for node in dag.nodes():
         if dag.out_degree(node) == 0:
             X[node] = 0
-            choices[node] = None
 
     while len(X) < tree.number_of_nodes():
         for node in topo:
@@ -119,26 +117,23 @@ def path_cover_two(tree):
                 continue
             if all(v in X for v in children):
                 #case where one child
+
                 # update X(node)
                 child_nodes_weights = {}
                 for child in children:
                     child_nodes_weights[child] = weights[child, node]
-                
-                #finds max weight
                 max_key = max(child_nodes_weights, key = child_nodes_weights.get)
+                #finds max weight
                 fstmax = child_nodes_weights[max_key]
-                
-                choices[node] = (max_key, None)
-                # finds scnd max, sets to zero if doesn't exist
-                if len(children) > 1:
-                    child_nodes_weights[max_key] = -100  
-                    scdmax_key = max(child_nodes_weights, key=child_nodes_weights.get)
-                    scdmax = child_nodes_weights[scdmax_key] if child_nodes_weights[scdmax_key] != -100 else 0
-                    
-                    # add second max to choices
-                    choices[node] = (max_key, scdmax_key)  # tack both max and second max children
-                else:
-                    scdmax = 0
+                if fstmax != 0:
+                    child_nodes_weights[max_key] = -100
+                #finds second max weight, sets to zero if it doesn't exist
+                scdmax_key = max(child_nodes_weights, key = child_nodes_weights.get)
+                scdmax = 0
+                if child_nodes_weights[scdmax_key] != -100:
+                    scdmax = child_nodes_weights[scdmax_key]
+                if scdmax != 0:
+                    child_nodes_weights[scdmax_key] = -100
                 X[node] = fstmax + scdmax
                 #adds all unused nodes, used nodes have been marked with -100
                 for child in children:
@@ -152,40 +147,14 @@ def path_cover_two(tree):
                         weights[node, parent] = X[node] + weights[node, parent] - scdmax
                     else:
                         weights[node, parent] = 0
-                        
-    # Recover the vertex-disjoint paths
-    path = [] 
-    for node in topo:
-        if choices[node] is not None:
-            v1, v2 = choices[node]
-            if v1 is not None:
-                path.append((node, v1))  #recover path from fstmax child
-            if v2 is not None:
-                path.append((node, v2))  #recover path from scndmax child
-
-    print('Path edges: ' + str(path))  
-    print('Total path length (X[root]): ' + str(X[0]))  
-    
-    return X, path  
+        
+    return X
 
 
 
             
             
                 
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
