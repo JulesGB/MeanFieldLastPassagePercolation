@@ -77,21 +77,23 @@ def path_cover(tree):
                     path.append((node, v2))
             else:
                 preds = list(dag.predecessors(node))
-                #parent_z = max_weights[parent][1]
-                if z <= 0: # or parent_z <= 0:
+                if z <= 0:
                     # Take second max
                     path.append((node, v2))
-                #else:
-                #    # Take parent and first max
-                #    if len(preds) > 0:
-                #        parent = preds[0]
-                #        if max_weights[parent][1] > 0:
-                #            path.append((node,v2))
+                else:
+                    # If we want node to take the parent edge,
+                    # we must check that node is 1st/2nd max for parent
+                    if len(preds) > 0:
+                        parent = preds[0]
+                        if max_weights[parent][1] <= 0:
+                            if node != max_weights[parent][2] and node != max_weights[parent][3]:
+                                path.append((node,v2))
 
-    print('Path edges: ' + str(path))
-    print('Total path length (x(root)): ' + str(max_weights[0][0]))
-    print('Total path length (actual): ' + str(sum(weights[e] for e in path)))
-    print('Difference: ' + str(sum(weights[e] for e in path)-max_weights[0][0]))
+    #print('Path edges: ' + str(path))
+    #print('Total path length (x(root)): ' + str(max_weights[0][0]))
+    #print('Total path length (actual): ' + str(sum(weights[e] for e in path)))
+    #print('Difference: ' + str(sum(weights[e] for e in path)-max_weights[0][0]))
+    sum(weights[e] for e in path)-max_weights[0][0])
 
     return path
 
