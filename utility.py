@@ -104,7 +104,7 @@ def path_cover_two(tree):
         weights[v,u] = weights[u,v]
     
     X = {}
-    choices = {}
+    choices = {} #added to track which edges contribute to second max and  first max
     for node in dag.nodes():
         if dag.out_degree(node) == 0:
             X[node] = 0
@@ -161,9 +161,15 @@ def path_cover_two(tree):
             if v2 is not None:
                 path.append((node, v2))  #recover path from scndmax child
 
+    difference = total_weight - X[0]
+
+    # Print path, total length, and the difference
     print('Path edges: ' + str(path))  
     print('Total path length (X[root]): ' + str(X[0]))  
-    
+    print('Total path length (actual): ' + str(total_weight))
+    print('Difference: ' + str(difference))
+
+   
     return X, path  
 
 
