@@ -1,5 +1,6 @@
 import networkx as nx
 import queue
+from IPython.core.debugger import set_trace
 
 def kmax_diameter(graph):
     if nx.is_strongly_connected(graph):
@@ -63,6 +64,7 @@ def path_cover(tree, root=0):
                 max_weights[node] = (x, z, max1_v, max2_v)
 
     # Recover vertex-disjoint path
+    # -----------------------------------------------
     path = []
     
     #for node,(x,z,v1,v2) in max_weights.items():
@@ -71,17 +73,19 @@ def path_cover(tree, root=0):
         #print(str(node) + ': ' + str((x,z,v1,v2)))
         if v1 != None and max_weights[v1][1] > 0:
             path.append((node, v1))
-
         if v2 != None:
             if node == root:
                 if max_weights[v2][1] > 0:
                     path.append((node, v2))
             else:
                 preds = list(dag.predecessors(node))
+                # Parent edge is worse
                 if z <= 0:
                     # Take second max
                     path.append((node, v2))
+                # Taking parent edge is better for node
                 else:
+                    if node == 
                     # If we want node to take the parent edge,
                     # we must check that node is 1st/2nd max for parent
                     if len(preds) > 0:
@@ -89,8 +93,7 @@ def path_cover(tree, root=0):
                         if max_weights[parent][1] <= 0:
                             if node != max_weights[parent][2] and node != max_weights[parent][3]:
                                 path.append((node,v2))
-                        else:
-                            if node != max_weights[parent][2]:
+                            elif node != max_weights[parent][3]:
                                 path.append((node, v2))
 
     #print('Path edges: ' + str(path))
@@ -98,6 +101,7 @@ def path_cover(tree, root=0):
     #print('Total path length (actual): ' + str(sum(weights[e] for e in path)))
     #print('Difference: ' + str(sum(weights[e] for e in path)-max_weights[root][0]))
     diff = sum(weights[e] for e in path)-max_weights[root][0]
+    set_trace()
 
     return path, diff, max_weights[root][0]
 
