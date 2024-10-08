@@ -1,5 +1,6 @@
-import networkx as nx
+import math
 import queue
+import networkx as nx
 from IPython.core.debugger import set_trace
 
 def kmax_diameter(graph):
@@ -79,8 +80,8 @@ def path_cover(tree, root=0):
         x,z,v1,v2 = max_weights[current_node]
         if v1 != None:
             z_v1 = max_weights[v1][1]
-            if z_v1 >= 0 or z + z_v1 < 0: # z+z(v1)<0 iff z < -z(v1) = abs(z(v1))
-            #if z_v1 >= 0 or z + z_v1 >= 0:
+            #if z_v1 >= 0 or z + z_v1 < 0: # z+z(v1)<0 iff z < -z(v1) = abs(z(v1))
+            if z_v1 >= 0 or (z + z_v1 >= 0 and True):
                 path.add((current_node, v1))
 
         if v2 != None:
@@ -125,9 +126,15 @@ def path_cover(tree, root=0):
     path_len = sum(weights[e] for e in path)
     x_root = max_weights[root][0]
     diff = path_len - x_root
-    print(diff)
+
+    if not math.isclose(diff, 0.0, abs_tol=1e-4):
+        if diff < 0:
+            print("ERROR: Undercounting!")
+        else:
+            print("ERROR: Overcounting!")
+        print(diff)
     
-    set_trace()
+    #set_trace()
 
     return path, diff, max_weights[root][0]
 
