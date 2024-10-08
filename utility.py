@@ -65,42 +65,68 @@ def path_cover(tree, root=0):
 
     # Recover vertex-disjoint path
     # -----------------------------------------------
-    path = []
-    
-    #for node,(x,z,v1,v2) in max_weights.items():
-    for node in topo[::-1]:
-        x,z,v1,v2 = max_weights[node]
-        #print(str(node) + ': ' + str((x,z,v1,v2)))
-        if v1 != None and max_weights[v1][1] > 0:
-            path.append((node, v1))
+    path = set()
+
+    current_node = None
+    queue = [root]
+    while len(queue) > 0:
+        current_node = queue.pop(0)
+        
+        # BFS traversal
+        for child in dag.successors(current_node):
+            queue.append(child)
+
+        x,z,v1,v2 = max_weights[current_node]
+        if v1 != None:
+            z_v1 = max_weights[v1][1]
+            if z_v1 >= 0 or z + z_v1 < 0: # z+z(v1)<0 iff z < -z(v1) = abs(z(v1))
+            #if z_v1 >= 0 or z + z_v1 >= 0:
+                path.add((current_node, v1))
+
         if v2 != None:
-            if node == root:
-                if max_weights[v2][1] > 0:
-                    path.append((node, v2))
+            if current_node == root:
+                if max_weights[v2][1] >= 0: # v2 wants root
+                    path.add((current_node, v2))
             else:
-                preds = list(dag.predecessors(node))
-                # Parent edge is worse
-                if z <= 0:
-                    # Take second max
-                    path.append((node, v2))
-                # Taking parent edge is better for node
-                else:
-                    if node == 
-                    # If we want node to take the parent edge,
-                    # we must check that node is 1st/2nd max for parent
-                    if len(preds) > 0:
-                        parent = preds[0]
-                        if max_weights[parent][1] <= 0:
-                            if node != max_weights[parent][2] and node != max_weights[parent][3]:
-                                path.append((node,v2))
-                            elif node != max_weights[parent][3]:
-                                path.append((node, v2))
+                parent = next(dag.predecessors(current_node))
+                if (parent, current_node) not in path:
+                    path.add((current_node,v2))
+    
+    # #for node,(x,z,v1,v2) in max_weights.items():
+    # for node in topo[::-1]:
+    #     x,z,v1,v2 = max_weights[node]
+    #     #print(str(node) + ': ' + str((x,z,v1,v2)))
+    #     if v1 != None and max_weights[v1][1] > 0:
+    #         path.append((node, v1))
+    #     if v2 != None:
+    #         if node == root:
+    #             if max_weights[v2][1] > 0:
+    #                 path.append((node, v2))
+    #         else:
+    #             preds = list(dag.predecessors(node))
+    #             if z <= 0: # Parent edge is worse
+    #                 path.append((node, v2))
+    #             else: # Taking parent edge is better for node
+    #                 # If node wants to take the parent edge (z(node)>0),
+    #                 # We must check that node is 1st/2nd max for parent
+    #                 if len(preds) > 0:
+    #                     parent = preds[0]
+    #                     if max_weights[parent][1] <= 0:
+    #                         #if node != max_weights[parent][2] and node != max_weights[parent][3]:
+    #                         if node != max_weights[parent][2] and node != max_weights[parent][3]:
+    #                             path.append((node,v2))
+    #                         #elif node != max_weights[parent][3]:
+    #                         #    path.append((node, v2))
 
     #print('Path edges: ' + str(path))
     #print('Total path length (x(root)): ' + str(max_weights[root][0]))
     #print('Total path length (actual): ' + str(sum(weights[e] for e in path)))
     #print('Difference: ' + str(sum(weights[e] for e in path)-max_weights[root][0]))
-    diff = sum(weights[e] for e in path)-max_weights[root][0]
+    path_len = sum(weights[e] for e in path)
+    x_root = max_weights[root][0]
+    diff = path_len - x_root
+    print(diff)
+    
     set_trace()
 
     return path, diff, max_weights[root][0]
