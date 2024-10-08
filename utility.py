@@ -80,49 +80,20 @@ def path_cover(tree, root=0):
         x,z,v1,v2 = max_weights[current_node]
         if v1 != None:
             z_v1 = max_weights[v1][1]
-            #if z_v1 >= 0 or z + z_v1 < 0: # z+z(v1)<0 iff z < -z(v1) = abs(z(v1))
-            if z_v1 >= 0 or (z + z_v1 >= 0 and True):
+            #if z_v1 >= 0 or z + z_v1 >= 0:
+            if z_v1 >= 0:
                 path.add((current_node, v1))
 
         if v2 != None:
             if current_node == root:
-                if max_weights[v2][1] >= 0: # v2 wants root
+                z_v2 = max_weights[v2][1]
+                if z_v2 >= 0:
                     path.add((current_node, v2))
             else:
                 parent = next(dag.predecessors(current_node))
                 if (parent, current_node) not in path:
                     path.add((current_node,v2))
-    
-    # #for node,(x,z,v1,v2) in max_weights.items():
-    # for node in topo[::-1]:
-    #     x,z,v1,v2 = max_weights[node]
-    #     #print(str(node) + ': ' + str((x,z,v1,v2)))
-    #     if v1 != None and max_weights[v1][1] > 0:
-    #         path.append((node, v1))
-    #     if v2 != None:
-    #         if node == root:
-    #             if max_weights[v2][1] > 0:
-    #                 path.append((node, v2))
-    #         else:
-    #             preds = list(dag.predecessors(node))
-    #             if z <= 0: # Parent edge is worse
-    #                 path.append((node, v2))
-    #             else: # Taking parent edge is better for node
-    #                 # If node wants to take the parent edge (z(node)>0),
-    #                 # We must check that node is 1st/2nd max for parent
-    #                 if len(preds) > 0:
-    #                     parent = preds[0]
-    #                     if max_weights[parent][1] <= 0:
-    #                         #if node != max_weights[parent][2] and node != max_weights[parent][3]:
-    #                         if node != max_weights[parent][2] and node != max_weights[parent][3]:
-    #                             path.append((node,v2))
-    #                         #elif node != max_weights[parent][3]:
-    #                         #    path.append((node, v2))
 
-    #print('Path edges: ' + str(path))
-    #print('Total path length (x(root)): ' + str(max_weights[root][0]))
-    #print('Total path length (actual): ' + str(sum(weights[e] for e in path)))
-    #print('Difference: ' + str(sum(weights[e] for e in path)-max_weights[root][0]))
     path_len = sum(weights[e] for e in path)
     x_root = max_weights[root][0]
     diff = path_len - x_root
