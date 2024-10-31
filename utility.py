@@ -35,7 +35,7 @@ def path_cover(tree, root=0):
             parents = dag.predecessors(node)
             max_weights[node] = (0, next(parents), None, None)
 
-    while len(max_weights) < tree.number_of_nodes():
+    while len(max_weights) < dag.number_of_nodes():
         # Iterate over nodes in (reverse) topological order
         for node in topo:               
             children = list(dag.successors(node))
@@ -110,7 +110,7 @@ def path_cover(tree, root=0):
     #print('Difference: ' + str(sum(weights[e] for e in path)-max_weights[root][0]))
     diff = sum(weights[e] for e in path)-max_weights[root][0]
 
-    return path, diff, max_weights[root][0]
+    return list(path), diff, max_weights[root][0]
 
 def path_cover_two(tree):
     dag = nx.bfs_tree(tree, 0)
