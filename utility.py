@@ -110,7 +110,7 @@ def path_cover(tree, root=0):
     #print('Difference: ' + str(sum(weights[e] for e in path)-max_weights[root][0]))
     diff = sum(weights[e] for e in path)-max_weights[root][0]
 
-    return list(path), diff, max_weights[root][0]
+    return list(path), diff, max_weights[root][0], max_weights[root][1]
 
 def path_cover_two(tree):
     dag = nx.bfs_tree(tree, 0)
