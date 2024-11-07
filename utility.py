@@ -22,7 +22,7 @@ def path_cover(tree, root=0):
     weights = nx.get_edge_attributes(tree, 'weight')
 
     if dag.number_of_nodes() == 1:
-        return [], 0, 0
+        return [], 0, 0, 1
 
     # Make weights bidirectional
     for u,v in list(weights.keys()):
