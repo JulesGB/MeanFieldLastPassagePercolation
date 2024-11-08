@@ -60,6 +60,8 @@ def path_cover(tree, root=0):
                     parent = next(dag.predecessors(node))
                     parent_edge_weight = weights[(node, parent)]
                     z = parent_edge_weight - max(max2, 0)
+                else:
+                    z = 1 - max(max2, 0)
                 
                 max_weights[node] = (x, z, max1_v, max2_v)
 
