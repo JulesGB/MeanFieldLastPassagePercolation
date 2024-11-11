@@ -143,4 +143,25 @@ def GWBP(a = 1, MAXLEVEL = 10):
     level = level[0:i]
     return G
 
+# Generate a branching tree using a uniform branching process upto level MAXLEVEL
+def uniformtree(MAXLEVEL = 10):
+    G = nx.DiGraph()
+    G.add_node(0, level = 0)
+    nodes_at_level = [0]
+    id = 1
+
+    for level in range(MAXLEVEL):
+        children = []
+        for node in nodes_at_level:
+            num_leaves = np.random.randint(4)
+            for _ in range(num_leaves):
+                G.add_node(id, level)
+                G.add_edge(node, id)
+                children += id
+                id += 1
+        nodes_at_level = children
+    
+    return G
+
+
 #nx.write_graphml(G, "tree.graphml")
