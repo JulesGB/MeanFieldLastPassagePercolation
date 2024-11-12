@@ -118,12 +118,13 @@ def hierarchye_pos(G, root, levels=None, width=1., height=1., xcenter = 0.5):
 	
 
 # Generate GW Branching tree with Poisson(a) offspring upto level MAXLEVEL
-def GWBP(a = 1, MAXLEVEL = 10):
+def GWBP(a = 1, MAXLEVEL = 10, dist=lambda: np.random.poisson(a)):
     G = nx.DiGraph()
     G.add_node(0, level = 0)
     level = [0] * MAXLEVEL
     level[0] = 0
-    X = np.random.poisson(a)
+    #X = np.random.poisson(a)
+    X = dist()
     level[1] = X
 
     for v in range(level[0]+1, level[1]+1):
@@ -135,7 +136,8 @@ def GWBP(a = 1, MAXLEVEL = 10):
             break ## stop, no more growth
         level[i+1] = level[i]
         for j in range(level[i-1]+1, level[i]+1):
-            X = np.random.poisson(a)
+            #X = np.random.poisson(a)
+            X = dist()
             for v in range(level[i+1]+1, level[i+1]+X+1):
                 G.add_node(v, level = i+1)
                 G.add_edge(j, v)
@@ -148,17 +150,17 @@ def uniformtree(MAXLEVEL = 10):
     G = nx.DiGraph()
     G.add_node(0, level = 0)
     nodes_at_level = [0]
-    id = 1
+    node_id = 1
 
     for level in range(MAXLEVEL):
         children = []
         for node in nodes_at_level:
             num_leaves = np.random.randint(4)
             for _ in range(num_leaves):
-                G.add_node(id, level)
-                G.add_edge(node, id)
-                children += id
-                id += 1
+                G.add_node(node_id, level)
+                G.add_edge(node, node_id)
+                children += node_id
+                node_id += 1
         nodes_at_level = children
     
     return G
