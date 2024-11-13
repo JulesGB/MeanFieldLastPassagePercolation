@@ -118,7 +118,10 @@ def hierarchye_pos(G, root, levels=None, width=1., height=1., xcenter = 0.5):
 	
 
 # Generate GW Branching tree with Poisson(a) offspring upto level MAXLEVEL
-def GWBP(a = 1, MAXLEVEL = 10, dist=lambda: np.random.poisson(a)):
+def GWBP(a = 1, MAXLEVEL = 10, dist = None):
+    if dist is None:
+        dist = lambda: np.random.poisson(a)
+    
     G = nx.DiGraph()
     G.add_node(0, level = 0)
     level = [0] * MAXLEVEL
