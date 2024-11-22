@@ -149,6 +149,40 @@ def GWBP(a = 1, MAXLEVEL = 10, dist = None):
     level = level[0:i]
     return G
 
+def GWBP_finite_flag(a = 1, MAXLEVEL = 10, dist = None):
+    if dist is None:
+        dist = lambda: np.random.poisson(a)
+    
+    G = nx.DiGraph()
+    G.add_node(0, level = 0)
+    level = [0] * MAXLEVEL
+    level[0] = 0
+    #X = np.random.poisson(a)
+    X = dist()
+    level[1] = X
+
+    for v in range(level[0]+1, level[1]+1):
+        G.add_node(v, level = 1)
+        G.add_edge(0, v)
+    
+    flag = False
+    
+    for i in range(1, MAXLEVEL-1):
+        if level[i]==level[i-1]:
+            flag = True
+            break ## stop, no more growth
+        level[i+1] = level[i]
+        for j in range(level[i-1]+1, level[i]+1):
+            #X = np.random.poisson(a)
+            X = dist()
+            for v in range(level[i+1]+1, level[i+1]+X+1):
+                G.add_node(v, level = i+1)
+                G.add_edge(j, v)
+            level[i+1] = level[i+1] + X
+    level = level[0:i]
+    return G, flag
+
+
 # Generate a branching tree using a uniform branching process upto level MAXLEVEL
 def uniformtree(MAXLEVEL = 10):
     G = nx.DiGraph()
