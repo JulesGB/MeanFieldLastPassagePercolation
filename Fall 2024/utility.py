@@ -86,13 +86,13 @@ def path_cover(tree, root=0):
                 path.add((current_node, v1))
 
         if v2 != None:
+            z_v2 = max_weights[v2][1]
             if current_node == root:
-                z_v2 = max_weights[v2][1]
                 if z_v2 >= 0:
                     path.add((current_node, v2))
             else:
                 parent = next(dag.predecessors(current_node))
-                if (parent, current_node) not in path:
+                if z_v2 >= 0 and (parent, current_node) not in path:
                     path.add((current_node,v2))
 
     path_len = sum(weights[e] for e in path)
@@ -110,9 +110,9 @@ def path_cover(tree, root=0):
     #print('Total path length (x(root)): ' + str(max_weights[root][0]))
     #print('Total path length (actual): ' + str(sum(weights[e] for e in path)))
     #print('Difference: ' + str(sum(weights[e] for e in path)-max_weights[root][0]))
-    diff = sum(weights[e] for e in path)-max_weights[root][0]
+    #diff = sum(weights[e] for e in path)-max_weights[root][0]
 
-    return list(path), diff, max_weights[root][0], max_weights[root][1]
+    return list(path), diff, max_weights[root][0], max_weights[root][1], max_weights
 
 # def path_cover_two(tree):
 #     dag = nx.bfs_tree(tree, 0)
