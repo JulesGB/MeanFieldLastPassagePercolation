@@ -16,7 +16,7 @@ def kmax_diameter(graph):
 def count_bidrectional(graph):
     return 0.5 * len([ 1 for (u,v) in graph.edges() if u in graph[v] ])
 
-def path_cover(tree, root=0):
+def path_cover(tree, root=0, return_tuples=False):
     dag = nx.bfs_tree(tree, root)
     topo = list(nx.topological_sort(dag))[::-1]
     weights = nx.get_edge_attributes(tree, 'weight')
@@ -64,6 +64,10 @@ def path_cover(tree, root=0):
                     z = 1 - max(max2, 0)
                 
                 max_weights[node] = (x, z, max1_v, max2_v)
+
+    if return_tuples:
+        print(max_weights)
+        return max_weights
 
     # Recover vertex-disjoint path
     # -----------------------------------------------
