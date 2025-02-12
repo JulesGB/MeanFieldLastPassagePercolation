@@ -66,8 +66,8 @@ def path_cover(tree, root=0, return_tuples=False):
                 max_weights[node] = (x, z, max1_v, max2_v)
 
     if return_tuples:
-        print(max_weights)
-        return max_weights
+        #print(max_weights)
+        return max_weights.items()
 
     # Recover vertex-disjoint path
     # -----------------------------------------------
