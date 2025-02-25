@@ -1,6 +1,7 @@
 import networkx as nx
 import queue
 import math
+import random
 
 def kmax_diameter(graph):
     if nx.is_strongly_connected(graph):
@@ -22,7 +23,7 @@ def path_cover(tree, root=0, return_tuples=False):
     weights = nx.get_edge_attributes(tree, 'weight')
 
     if dag.number_of_nodes() == 1:
-        return [], 0, 0, 1
+        return {0 : (0, random.uniform(0,1), 0, 0)}.items()
 
     # Make weights bidirectional
     for u,v in list(weights.keys()):
@@ -61,10 +62,16 @@ def path_cover(tree, root=0, return_tuples=False):
                     parent_edge_weight = weights[(node, parent)]
                     z = parent_edge_weight - max(max2, 0)
                 else:
-                    z = 1 - max(max2, 0)
+                    z = random.uniform(0,1) - max(max2, 0)
                 
                 max_weights[node] = (x, z, max1_v, max2_v)
 
+
+    # max_weights[root] = list(max_weights[root])
+    
+    # max_weights[root][1] = random.uniform(0,1) if dag.number_of_nodes() == 1 else (random.uniform(0,1) - max_weights[root][3])
+
+    # max_weights[root] = tuple(max_weights[root])
     if return_tuples:
         #print(max_weights)
         return max_weights.items()
@@ -109,12 +116,6 @@ def path_cover(tree, root=0, return_tuples=False):
         else:
             print("ERROR: Overcounting!")
         print(diff)
-
-    #print('Path edges: ' + str(path))
-    #print('Total path length (x(root)): ' + str(max_weights[root][0]))
-    #print('Total path length (actual): ' + str(sum(weights[e] for e in path)))
-    #print('Difference: ' + str(sum(weights[e] for e in path)-max_weights[root][0]))
-    #diff = sum(weights[e] for e in path)-max_weights[root][0]
 
     return list(path), diff, max_weights[root][0], max_weights[root][1], max_weights
 
