@@ -28,7 +28,7 @@ def compute_z_pdf(l, num_samples, num_iterations=20, print_iters=False):
     y = 1 - np.concatenate((G[:-1], H[::-1]), axis=None) / l
     xs = x[1:]
     
-    ys = np.c_[y[1:], np.diff(y)/delta]
+    ys = np.c_[np.diff(y)/delta]
     # ys = -l * np.diff(y)/delta
     
     return xs, ys
