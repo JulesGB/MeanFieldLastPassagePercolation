@@ -16,9 +16,11 @@ def generate_kmax(graph, k):
             km.add_edge(e[0], e[1], weight=e[2]['weight'])
     return km
 
-def custom_draw(graph, dest, draw_edge_weights=True, layout=nx.circular_layout):
+def custom_draw(graph, dest,
+                draw_edge_weights=True, layout=nx.circular_layout):
     pos1 = layout(graph)
-    nx.draw_networkx(graph, pos=pos1, with_labels=True, arrows=True, node_size=100)
+    nx.draw_networkx(graph, pos=pos1, with_labels=True,
+                     arrows=True, node_size=100)
     
     if draw_edge_weights:
         labels = nx.get_edge_attributes(graph, 'weight')
