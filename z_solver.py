@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.optimize import fsolve
+from scipy.differentiate import derivative
 
 def A(data):
     return [(1+x) * np.exp(-x) for x in data]
@@ -32,6 +34,22 @@ def compute_z_pdf(l, num_samples, num_iterations=20, print_iters=False):
     # ys = -l * np.diff(y)/delta
     
     return xs, ys
+
+def compute_z_pdf_exp(lam, num_samples):
+    func = lambda A: [A[0]**2 * np.exp(A[0]) / lam - (2 * np.exp(A[0]) - 2 - A[0])]
+    A_lam = fsolve(func, [lam])[0]
+
+    helper = lambda x: A_lam * np.exp(-x)
+    #cdf = lambda x: (1 + helper(x[0])) * np.exp(-1 * helper(x[0]))
+    cdf = lambda x: (1 + helper(x)) * np.exp(-1 * helper(x))
+    
+    xs = np.linspace(0, 1, num_samples)
+    ys = [cdf(x) for x in xs]
+    #pdf = derivative(cdf, xs, preserve_shape=True)
+    #return pdf.df
+    pdf = np.diff(ys) * num_samples # (f(x+1) - f(x)) / h, h = (1-0)/num_samples
+    return pdf
+
 
 """
 X = np.linspace(0, .5, N)
