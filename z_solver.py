@@ -1,5 +1,7 @@
+import math
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy.integrate as integrate
 from scipy.optimize import fsolve
 from scipy.differentiate import derivative
 
@@ -35,20 +37,40 @@ def compute_z_pdf(l, num_samples, num_iterations=20, print_iters=False):
     
     return xs, ys
 
-def compute_z_pdf_exp(lam, num_samples):
-    func = lambda A: [A[0]**2 * np.exp(A[0]) / lam - (2 * np.exp(A[0]) - 2 - A[0])]
+def compute_z_pdf_exp(lam, num_samples, high=10):
+    func = lambda A: [((A[0])**2 * np.exp(A[0]) / lam) - (2 * np.exp(A[0]) - 2 - A[0])]
     A_lam = fsolve(func, [lam])[0]
 
-    helper = lambda x: A_lam * np.exp(-x)
-    #cdf = lambda x: (1 + helper(x[0])) * np.exp(-1 * helper(x[0]))
-    cdf = lambda x: (1 + helper(x)) * np.exp(-1 * helper(x))
-    
-    xs = np.linspace(0, 1, num_samples)
-    ys = [cdf(x) for x in xs]
-    #pdf = derivative(cdf, xs, preserve_shape=True)
-    #return pdf.df
-    pdf = np.diff(ys) * num_samples # (f(x+1) - f(x)) / h, h = (1-0)/num_samples
-    return pdf
+    xs = np.linspace(0, high, num_samples)
+    z_pdf = lambda x: np.exp(-x) * A_lam / lam
+    z_pdf_values = z_pdf(xs)
+    z_pdf_values[0] = (1+A_lam) * math.exp(-A_lam)
+    print(f'F_delta(0) = {(1+A_lam)*math.exp(-A_lam)}')
+    return xs, z_pdf_values, A_lam
+
+    #helper = lambda x: A_lam * np.exp(-x)
+    #cdf = lambda x: (1 + helper(x)) / np.exp(helper(x))
+    #print(f'cdf(0)={cdf(0)}')
+    #
+    #xs = np.linspace(0, high, num_samples)
+    #delta_pdf = derivative(cdf, xs).df
+    #plt.plot(xs, delta_pdf, scaley=False)
+    #plt.title('PDF of $\\delta$')
+    #print(f'area={integrate.simpson(delta_pdf, x=xs)}')
+    #print(f'f_d(0)={delta_pdf[0]}')
+    #print(f'f_d(10)={delta_pdf[-1]}')
+#
+    ## P(Z>x) = exp(-x) * E(exp(-delta))
+    ## E(exp(-delta)) = \int_0^{\infty} exp(-x) * f_\delta(x) dx
+    #integrand = [math.exp(-x) * delta for x, delta in zip(xs, delta_pdf)]
+    #expectation = integrate.simpson(integrand, x=xs)
+    #inv_z_cdf = lambda x: np.exp(-x) * expectation
+    #print(inv_z_cdf)
+#
+    #z_xs = np.linspace(-high, high, num_samples * 2)
+    #inv_z_pdf = derivative(inv_z_cdf, z_xs).df
+    #z_pdf = [-p for p in inv_z_pdf]
+    #return z_xs, z_pdf
 
 
 """
