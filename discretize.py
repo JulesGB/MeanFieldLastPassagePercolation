@@ -3,6 +3,8 @@ from scipy.stats import *
 
 def log_bins(num_bins):
     bins = [float("-inf")]
+    for i in range(2, num_bins):
+        bins.append(-1 * (math.log(num_bins) - math.log(i)))
     for i in range(num_bins, 1, -1):
         # -log(i/k) = log(k) - log(i)
         bins.append(math.log(num_bins) - math.log(i))
