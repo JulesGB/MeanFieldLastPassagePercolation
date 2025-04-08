@@ -35,7 +35,7 @@ def path_cover(tree, root=0, return_tuples=False):
         if dag.out_degree(node) == 0:
             parents = dag.predecessors(node)
             # max_weights[node] = (0, next(parents), None, None)
-            max_weights[node] = (0, 0, None, None)  #added delta = 0 for leaves
+            max_weights[node] = (0, 0, None, None, 0)  #added delta = 0 for leaves
             
     while len(max_weights) < dag.number_of_nodes():
         # Iterate over nodes in (reverse) topological order
@@ -68,7 +68,7 @@ def path_cover(tree, root=0, return_tuples=False):
                 delta = max(max2, 0)
 
                 # max_weights[node] = (x, z, max1_v, max2_v)
-                max_weights[node] = (x, delta, max1_v, max2_v)                
+                max_weights[node] = (x, z, max1_v, max2_v, delta)                
 
 
     # max_weights[root] = list(max_weights[root])
@@ -93,17 +93,17 @@ def path_cover(tree, root=0, return_tuples=False):
         for child in dag.successors(current_node):
             queue.append(child)
 
-        # x,z,v1,v2 = max_weights[current_node]
-        x, delta, v1, v2 = max_weights[current_node]
-        # if v1 != None:
-        if v1 is not None and weights[(current_node, v1)] - max_weights[v1][1] >= 0:
+        x,z,v1,v2 = max_weights[current_node]
+        #x, delta, v1, v2 = max_weights[current_node]
+        if v1 != None:
+        #if v1 is not None and weights[(current_node, v1)] - max_weights[v1][1] >= 0:
             z_v1 = max_weights[v1][1]
             #if z_v1 >= 0 or z + z_v1 >= 0:
             if z_v1 >= 0:
                 path.add((current_node, v1))
 
-        # if v2 != None:
-        if v2 is not None and weights[(current_node, v2)] - max_weights[v2][1] >= 0:
+        if v2 != None:
+        #if v2 is not None and weights[(current_node, v2)] - max_weights[v2][1] >= 0:
             z_v2 = max_weights[v2][1]
             if current_node == root:
                 if z_v2 >= 0:
