@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.integrate as integrate
 from scipy.optimize import fsolve
-from scipy.differentiate import derivative
+# from scipy.differentiate import derivative
 
 def A(data):
     return [(1+x) * np.exp(-x) for x in data]
@@ -29,13 +29,17 @@ def compute_z_pdf(l, num_samples, num_iterations=20, print_iters=False):
 
     X = np.linspace(0, .5, num_samples)
     x = np.concatenate((X, 0.5+X[1:]), axis=None)
+    f_bars = np.concatenate((G[:-1], H[::-1]), axis=None) / l
     y = 1 - np.concatenate((G[:-1], H[::-1]), axis=None) / l
     xs = x[1:]
+    print(xs)
+    print(ys)
+    print(f_bars)
     
     ys = np.c_[np.diff(y)/delta]
     # ys = -l * np.diff(y)/delta
     
-    return xs, ys
+    return xs, ys, f_bars
 
 def compute_z_pdf_exp(lam, num_samples, high=10):
     func = lambda A: [((A[0])**2 * np.exp(A[0]) / lam) - (2 * np.exp(A[0]) - 2 - A[0])]
