@@ -5,15 +5,13 @@ from scipy.stats import *
 # Generates bin edges for log discretization
 def log_bins(num_bins):
     num_bins += 1
-    #bins = [float("-inf")]
-    bins = []
-    #for i in range(2, num_bins):
-    #    bins.append(-1 * (math.log(num_bins) - math.log(i)))
+    bins = [float("-inf")]
+    for i in range(2, num_bins):
+        bins.append(-1 * (math.log(num_bins) - math.log(i)))
     for i in range(num_bins, 1, -1):
         # -log(i/k) = log(k) - log(i)
         bins.append(math.log(num_bins) - math.log(i))
     bins.append(float("inf"))
-    #print(bins)
     return bins
 
 def discretize_linear(data, num_bins, low=None, high=None):   
