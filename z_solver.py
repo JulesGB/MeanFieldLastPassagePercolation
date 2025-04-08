@@ -45,12 +45,23 @@ def compute_z_pdf_exp(lam, num_samples, high=10):
     func = lambda A: [((A[0])**2 * np.exp(A[0]) / lam) - (2 * np.exp(A[0]) - 2 - A[0])]
     A_lam = fsolve(func, [lam])[0]
 
-    xs = np.linspace(0, high, num_samples)
-    z_pdf = lambda x: np.exp(-x) * A_lam / lam
-    z_pdf_values = z_pdf(xs)
-    z_pdf_values[0] = (1+A_lam) * math.exp(-A_lam)
-    print(f'F_delta(0) = {(1+A_lam)*math.exp(-A_lam)}')
-    return xs, z_pdf_values, A_lam
+    xs_pos = np.linspace(0, high, num_samples//2)
+    xs_neg = np.linspace(-high, 0, num_samples//2)
+    xs = np.concatenate([xs_neg, xs_pos])
+    
+    z_cdf = lambda x: 1 - np.exp(-x) * A_lam / lam
+    z_pdf_pos_values = derivative(z_cdf, xs_pos).df
+
+    def z_pdf_neg(x):
+        e1 = -1 * np.exp(-1*A_lam*np.exp(x)-x)
+        e2 = (2 - 2 * np.exp(A_lam*np.exp(x)) + 2 * A_lam * np.exp(x) + A_lam * A_lam * np.exp(2 * x))
+        return e1 * e2 / A_lam
+
+    z_pdf_neg_values = z_pdf_neg(xs_neg)
+    
+    z_pdf = np.concatenate([z_pdf_neg_values, z_pdf_pos_values])
+    #print(f'F_delta(0) = {(1+A_lam)*math.exp(-A_lam)}')
+    return xs, z_pdf, A_lam
 
     #helper = lambda x: A_lam * np.exp(-x)
     #cdf = lambda x: (1 + helper(x)) / np.exp(helper(x))
