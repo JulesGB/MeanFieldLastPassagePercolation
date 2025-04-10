@@ -93,7 +93,7 @@ def path_cover(tree, root=0, return_tuples=False):
         for child in dag.successors(current_node):
             queue.append(child)
 
-        x,z,v1,v2 = max_weights[current_node]
+        x,z,v1,v2, _= max_weights[current_node]
         #x, delta, v1, v2 = max_weights[current_node]
         if v1 != None:
         #if v1 is not None and weights[(current_node, v1)] - max_weights[v1][1] >= 0:
