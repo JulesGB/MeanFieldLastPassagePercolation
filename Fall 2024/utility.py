@@ -23,7 +23,7 @@ def path_cover(tree, root=0, return_tuples=False):
     weights = nx.get_edge_attributes(tree, 'weight')
 
     if dag.number_of_nodes() == 1:
-        return {0 : (0, random.uniform(0,1), 0, 0, 0)}.items() if return_tuples else None #-1,-1,0,-1,-1
+        return {0 : (0, random.uniform(0,1), 0, 0, 0)}.items() if return_tuples else (-1,-1,0,-1,-1)
                     # This was previously returning ({0 : ...}, -1, 0, -1, -1) 
 
     # Make weights bidirectional
