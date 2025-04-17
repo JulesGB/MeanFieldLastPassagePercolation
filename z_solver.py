@@ -32,12 +32,13 @@ def compute_z_pdf(l, num_samples, num_iterations=20, print_iters=False):
     f_bars = np.concatenate((G[:-1], H[::-1]), axis=None) / l
     y = 1 - np.concatenate((G[:-1], H[::-1]), axis=None) / l
     xs = x[1:]
-    print(xs)
-    print(ys)
-    print(f_bars)
-    
     ys = np.c_[np.diff(y)/delta]
-    # ys = -l * np.diff(y)/delta
+    
+    #print(xs)
+    #print(ys)
+    #print(f_bars)
+    
+    #ys = -l * np.diff(y)/delta
     
     return xs, ys, f_bars
 
