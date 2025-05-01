@@ -1,4 +1,3 @@
 # Mean-Field Last-Passage Percolation
 
-## Building
-TODO
+Requires Python 3.10+ with NetworkX, NumPy, SciPy, Matplotlib.
